@@ -1,21 +1,20 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"time"
 
 	"github.com/nadavbm/helmclient"
 )
 
-const (
-	releaseName = "reloader"
-	chartPath   = "/your/path/to/chart/reloader/"
-)
+var releaseName, releaseNamespace, chartPath string
 
 func main() {
+	parseCommandArgs()
 	chart := helmclient.GetHelmChart(releaseName, chartPath)
 
-	releaseNamespace := "default"
+	fmt.Println(time.Now(), "INFO:", "getting helm cliemt")
 	client, err := helmclient.GetClient(releaseNamespace, chart)
 	if err != nil {
 		panic(err)
@@ -25,7 +24,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Successfully installed release: ", rel.Name)
+	fmt.Println(time.Now(), "INFO:", "Successfully installed release: ", rel.Name)
 
 	// check in other terminal
 	time.Sleep(1 * time.Minute)
@@ -33,5 +32,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Successfully uninstalled release: ", res.Release.Name)
+	fmt.Println(time.Now(), "INFO:", "Successfully uninstalled release: ", res.Release.Name)
+}
+
+func parseCommandArgs() {
+	flag.StringVar(&releaseName, "rel", "helmut", "helm release name")
+	flag.StringVar(&releaseNamespace, "ns", "helmut", "kubernetes namespace of helm release")
+	flag.StringVar(&chartPath, "path", "helmut", "helm chart path")
+	flag.Parse()
 }

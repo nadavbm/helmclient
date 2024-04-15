@@ -1,0 +1,15 @@
+appName: reloader
+
+namespace: default
+
+image:
+  name: stakater/reloader
+  tag: v0.0.100
+
+resources: 
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
